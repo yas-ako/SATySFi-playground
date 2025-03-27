@@ -52,10 +52,10 @@ jobs:
           mkdir -p docs
           cp *.saty *.pdf index.html docs/ 2>/dev/null || true
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: my_site
-          path: docs
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: data
+      #     path: docs
       - uses: actions/upload-pages-artifact@v1
         with:
           path: docs
