@@ -15,24 +15,52 @@ jobs:
         uses: actions/checkout@v4
 
       # OCaml と opam のセットアップ（適宜バージョン調整）
-      - name: Setup OCaml and opam
-        uses: ocaml/setup-ocaml@v3
+      # - name: Setup OCaml and opam
+        # uses: ocaml/setup-ocaml@v3
 
       # opam の初期化と SATySFi 関連パッケージのインストール
-      - name: Initialize opam and install SATySFi packages
-        run: |
+      # - name: Initialize opam and install SATySFi packages
+        # run: |
           # opam init --disable-sandboxing -a --yes
           # eval $(opam env)
           # opam install satyrographos -y
           # opam install satysfi-class-jlreq -y
 
+
+      - name: Install OPAM
+        run: sudo apt update && sudo apt install -y opam
+
+      - name: Initialize OPAM
+        run: opam init -y
+
+      - name: Configure OPAM environment
+        run: eval $(opam env)
+
+      - name: Add repositories
+        run: |
+          opam repository add --all-switches satysfi-external https://github.com/gfngfn/satysfi-external-repo.git
+          opam repository add --all-switches satyrographos-repo https://github.com/na4zagin3/satyrographos-repo.git
+
+      - name: Install dependencies
+        run: opam depext satysfi satysfi-dist satyrographos -y
+
+      - name: Install Satysfi
+        run: opam install satysfi satysfi-dist satyrographos -y
+
+      - name: Run Satyrographos
+        run: |
+          opam install satysfi-class-jlreq -y
+          satyrographos install -y
+
+
       # .saty ファイルから PDF を生成（直下の .saty ファイルを対象）
       - name: Build PDFs from .saty files
         run: |
-          # for file in $(find . -maxdepth 1 -name "*.saty"); do
-            # echo "Processing $file"
-            # satyrographos "$file"
-          # done
+          for file in $(find . -maxdepth 1 -name "*.saty"); do
+            echo "Processing $file"
+            satyrographos "$file"
+          done
+
 
       # .saty ファイルおよび PDF ファイルへの相対リンク一覧を記載した index.html を生成
       - name: Generate index.html with relative links
