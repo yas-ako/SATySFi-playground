@@ -53,7 +53,10 @@ jobs:
         run: |
           opam install satysfi-class-jlreq -y
           eval $(opam env)
-          satyrographos install -y
+      
+      - name: satyrographos install
+        run: satyrographos install
+          
 
 
       # .saty ファイルから PDF を生成（直下の .saty ファイルを対象）
