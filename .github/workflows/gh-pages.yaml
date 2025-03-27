@@ -52,6 +52,7 @@ jobs:
       - name: Run Satyrographos
         run: |
           opam install satysfi-class-jlreq -y
+          eval $(opam env)
           satyrographos install -y
 
 
