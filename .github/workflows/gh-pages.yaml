@@ -49,12 +49,13 @@ jobs:
       - name: Install Satysfi
         run: opam install satysfi satysfi-dist satyrographos -y
 
-      - name: Run Satyrographos
-        run: |
-          opam install satysfi-class-jlreq -y
-          eval $(opam env)
+      - name: Install satysfi-class-jlreq
+        run: opam install satysfi-class-jlreq -y
+          
+      - name: eval $(opam env)
+        run: eval $(opam env)
       
-      - name: satyrographos install
+      - name: Run satyrographos install
         run: satyrographos install
           
 
