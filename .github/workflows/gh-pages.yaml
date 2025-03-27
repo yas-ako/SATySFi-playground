@@ -40,6 +40,8 @@ jobs:
         run: |
           opam repository add --all-switches satysfi-external https://github.com/gfngfn/satysfi-external-repo.git
           opam repository add --all-switches satyrographos-repo https://github.com/na4zagin3/satyrographos-repo.git
+      - name: Install opam-depext
+        run: opam install opam-depext
 
       - name: Install dependencies
         run: opam depext satysfi satysfi-dist satyrographos -y
