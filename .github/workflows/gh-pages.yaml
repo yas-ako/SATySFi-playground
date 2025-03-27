@@ -6,7 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +17,6 @@ jobs:
       # OCaml と opam のセットアップ（適宜バージョン調整）
       - name: Setup OCaml and opam
         uses: ocaml/setup-ocaml@v3
-
 
       # opam の初期化と SATySFi 関連パッケージのインストール
       - name: Initialize opam and install SATySFi packages
@@ -52,10 +50,6 @@ jobs:
           mkdir -p docs
           cp *.saty *.pdf index.html docs/ 2>/dev/null || true
 
-      # - uses: actions/upload-artifact@v3
-      #   with:
-      #     name: data
-      #     path: docs
       - uses: actions/upload-pages-artifact@v1
         with:
           path: docs
@@ -72,4 +66,3 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
-
