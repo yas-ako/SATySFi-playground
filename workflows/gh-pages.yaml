@@ -1,0 +1,70 @@
+name: SATySFi PDF Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリのチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # OCaml と opam のセットアップ（適宜バージョン調整）
+      - name: Setup OCaml and opam
+        uses: avsm/setup-ocaml@v2
+        with:
+          ocaml-version: '4.14.1'
+          opam-version: '2.1.5'
+
+      # opam の初期化と SATySFi 関連パッケージのインストール
+      - name: Initialize opam and install SATySFi packages
+        run: |
+          opam init --disable-sandboxing -a --yes
+          eval $(opam env)
+          opam install satyrographos -y
+          opam install satysfi-class-jlreq -y
+
+      # .saty ファイルから PDF を生成（直下の .saty ファイルを対象）
+      - name: Build PDFs from .saty files
+        run: |
+          for file in $(find . -maxdepth 1 -name "*.saty"); do
+            echo "Processing $file"
+            satyrographos "$file"
+          done
+
+      # .saty ファイルおよび PDF ファイルへの相対リンク一覧を記載した index.html を生成
+      - name: Generate index.html with relative links
+        run: |
+          echo '<html><head><meta charset="UTF-8"><title>Documents</title></head><body>' > index.html
+          echo '<h1>Document List</h1><ul>' >> index.html
+          for file in $(find . -maxdepth 1 -type f \( -name "*.saty" -o -name "*.pdf" \)); do
+            echo "<li><a href=\"$file\">$file</a></li>" >> index.html
+          done
+          echo '</ul></body></html>' >> index.html
+
+      # docs フォルダへ成果物を配置（GitHub Pages の公開対象）
+      - name: Prepare docs folder
+        run: |
+          mkdir -p docs
+          cp *.saty *.pdf index.html docs/ 2>/dev/null || true
+
+      # docs フォルダを Pages 用のアーティファクトとしてアップロード
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: docs
+
+      # GitHub Pages へデプロイ（別ブランチを使わず、Actions 経由でアップロード）
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # デプロイ先の URL を出力
+      - name: Print Pages URL
+        run: echo "Pages URL: ${{ steps.deploy-pages.outputs.page_url }}"
