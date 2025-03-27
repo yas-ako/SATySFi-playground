@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 
 jobs:
   build:
@@ -11,14 +13,12 @@ jobs:
     steps:
       # リポジトリのチェックアウト
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # OCaml と opam のセットアップ（適宜バージョン調整）
       - name: Setup OCaml and opam
-        uses: avsm/setup-ocaml@v2
-        with:
-          ocaml-version: '4.14.1'
-          opam-version: '2.1.5'
+        uses: ocaml/setup-ocaml@v3
+
 
       # opam の初期化と SATySFi 関連パッケージのインストール
       - name: Initialize opam and install SATySFi packages
