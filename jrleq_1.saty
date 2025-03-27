@@ -1,0 +1,29 @@
+@require: class-jlreq/jlreq
+@require: itemize
+
+document(|
+  title = { はじめての\SATySFi; };
+  author = { authorName };
+  date = { 日付 };
+  show-title = true;
+  show-toc = true;
+|)'<
+  +section { aaa } <
+    +p { まずは数式を書いてみます。二次方程式${ax^2 + bx + c = 0}の解は }
+    +math (${x = \frac{-b\pm \sqrt{b^2-4ac} }{2a}});
+  >
+  +section { セクション } <
+    +p { 段落 }
+    +subsection { サブセクション } <
+      +listing {
+        * リスト
+        * リスト
+         ** 一段下がる
+      }
+      +paragraph { 柱用見出し } { 見出し }
+      +p { 本文 }
+
+      +p { 段落 }
+    >
+  >
+>
