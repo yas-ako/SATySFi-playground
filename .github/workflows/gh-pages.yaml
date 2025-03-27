@@ -14,51 +14,45 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # OCaml と opam のセットアップ（適宜バージョン調整）
-      # - name: Setup OCaml and opam
-        # uses: ocaml/setup-ocaml@v3
-
-      # opam の初期化と SATySFi 関連パッケージのインストール
-      # - name: Initialize opam and install SATySFi packages
-        # run: |
-          # opam init --disable-sandboxing -a --yes
-          # eval $(opam env)
-          # opam install satyrographos -y
-          # opam install satysfi-class-jlreq -y
-
-
+      # Install OPAM
       - name: Install OPAM
         run: sudo apt update && sudo apt install -y opam
 
+      # Initialize OPAM
       - name: Initialize OPAM
-        run: opam init -y
-
-      - name: Configure OPAM environment
-        run: eval $(opam env)
-
+        run: |
+          opam init --disable-sandboxing -a --yes
+          eval $(opam env)
+      
+      # Add repositories
       - name: Add repositories
         run: |
           opam repository add --all-switches satysfi-external https://github.com/gfngfn/satysfi-external-repo.git
           opam repository add --all-switches satyrographos-repo https://github.com/na4zagin3/satyrographos-repo.git
-      - name: Install opam-depext
-        run: opam install opam-depext
 
+      # Install opam-depext
+      - name: Install opam-depext
+        run: opam install opam-depext -y
+
+      # Install dependencies
       - name: Install dependencies
         run: opam depext satysfi satysfi-dist satyrographos -y
 
+      # Install Satysfi
       - name: Install Satysfi
         run: opam install satysfi satysfi-dist satyrographos -y
 
+      # Install satysfi-class-jlreq
       - name: Install satysfi-class-jlreq
         run: opam install satysfi-class-jlreq -y
-          
-      - name: eval $(opam env)
+
+      # Configure OPAM environment
+      - name: Configure OPAM environment
         run: eval $(opam env)
-      
+
+      # Run satyrographos install
       - name: Run satyrographos install
         run: satyrographos install
-          
-
 
       # .saty ファイルから PDF を生成（直下の .saty ファイルを対象）
       - name: Build PDFs from .saty files
@@ -67,7 +61,6 @@ jobs:
             echo "Processing $file"
             satyrographos "$file"
           done
-
 
       # .saty ファイルおよび PDF ファイルへの相対リンク一覧を記載した index.html を生成
       - name: Generate index.html with relative links
