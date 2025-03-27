@@ -52,19 +52,24 @@ jobs:
           mkdir -p docs
           cp *.saty *.pdf index.html docs/ 2>/dev/null || true
 
-      # docs フォルダを Pages 用のアーティファクトとしてアップロード
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my_site
+          path: docs
+      - uses: actions/upload-pages-artifact@v1
         with:
           path: docs
 
-      # GitHub Pages へデプロイ（別ブランチを使わず、Actions 経由でアップロード）
-      - name: Deploy to GitHub Pages
-        id: deploy-pages
-        uses: actions/deploy-pages@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+  -deploy:
+    needs: build
+      runs-on: ubuntu-latest 
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/deploy-pages@v1
+        id: deployment
 
-      # デプロイ先の URL を出力
-      - name: Print Pages URL
-        run: echo "Pages URL: ${{ steps.deploy-pages.outputs.page_url }}"
